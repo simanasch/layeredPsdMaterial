@@ -33,17 +33,19 @@ bl_info = {
 
 import bpy
 # import importlib
-from .layeredPsdMaterial import *
-from .ui import *
+# from .layeredPsdMaterial import onFrameChangePost
+from .handler import *
+from .classes import psdLayerItem, psdLayerSettings, psd_OT_Settings
+from .ui import psdMaterial_PT_uiPanel
 
 #
 # register classs
 #
 classes = [
-  layeredPsdMaterial.psdLayerItem,
-  layeredPsdMaterial.psdLayerSettings,
-  layeredPsdMaterial.psd_OT_Settings,
-  ui.psdMaterial_PT_uiPanel
+  psdLayerItem,
+  psdLayerSettings,
+  psd_OT_Settings,
+  psdMaterial_PT_uiPanel
 ]
 
 #
@@ -51,9 +53,13 @@ classes = [
 #
 def register():
   for c in classes:
-    bpy.utils.register_class(c)
-  bpy.types.Object.psd_settings = bpy.props.PointerProperty(type=layeredPsdMaterial.psd_OT_Settings)
-  bpy.app.handlers.frame_change_post.append(layeredPsdMaterial.onFrameChangePost)
+    try:
+      bpy.utils.register_class(c)
+    except ValueError as e:
+      print(e)
+      pass
+  bpy.types.Object.psd_settings = bpy.props.PointerProperty(type=psd_OT_Settings)
+  bpy.app.handlers.frame_change_post.append(onFrameChangePost)
 
 
 #
@@ -62,4 +68,4 @@ def register():
 def unregister():
   for c in classes:
     bpy.utils.unregister_class(c)
-  bpy.app.handlers.frame_change_post.remove(layeredPsdMaterial.onFrameChangePost)
+  bpy.app.handlers.frame_change_post.remove(onFrameChangePost)

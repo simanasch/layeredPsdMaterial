@@ -47,6 +47,7 @@ def onUpdateLayerSettings(self,context):
 
 
 def updatePsdViewState(obj):
+  """psdファイルの表示状態が更新された場合の処理"""
   # この時点でlayerとカスタムプロパティからimage名を生成する
   image_name = getImageNameByProperty(obj)
   # psdの表示layer設定
@@ -169,12 +170,6 @@ def addPsdLayerSettings(obj):
         item = layerSetting.items.add()
         item.name = layer.name
 
-def onFrameChangePost(scene):
-  for obj in [obj for obj in scene.objects if obj.psd_settings.filePath != ""]:
-    updatePsdViewState(obj)
-    # print(obj.psd_settings.filePath)
-  pass
-
 def setPSDLayerConfigs(self, context):
   # context.objectがないか、psdファイルのパスじゃない場合はなにもしない
   if (context.object != None) & (getFileExtensionFromPath(self.filePath) == ".psd"):
@@ -182,74 +177,3 @@ def setPSDLayerConfigs(self, context):
     # 読み込み時
     onUpdateLayerSettings(self, context)
   pass
-
-# class setMaterialFromPSD(Operator):
-#   """オブジェクトのカスタムプロパティからpsdファイルとpsdファイル内で表示するlayer情報をとり、オブジェクトのmaterialとして設定する"""
-#   bl_idname = "layeredPsdMaterial.set_material_from_psd"
-#   bl_label = "set object material from psd"
-
-#   def execute(self, context):
-#     return {'FINISHED'}
-
-class psdLayerItem(bpy.types.PropertyGroup):
-  """psdファイル内の各layer階層の名前を持たせるためのクラス"""
-  bl_idname = "layeredPsdMaterial.psd_layer_item"
-  bl_label = "psdLayerItem"
-
-  name:StringProperty()
-
-# bpy.props.EnumPropertyの既知バグ回避のためのワークアラウンド
-# EnumPropertyに持たせる文字列への参照をキャッシュする(ないと文字化けする。。。)
-STRING_CACHE = {}
-def intern_enum_items(items):
-  def intern_string(s):
-    if not isinstance(s, str):
-      return s
-    global STRING_CACHE
-    if s not in STRING_CACHE:
-      STRING_CACHE[s] = s
-    return STRING_CACHE[s]
-  return [tuple(intern_string(s) for s in item) for item in items]
-
-class psdLayerSettings(bpy.types.PropertyGroup):
-  """psdファイル内のlayerごとの表示状態を保持するカスタムプロパティクラス"""
-  bl_idname = "layeredPsdMaterial.psd_layer_settings"
-  bl_label = "psdLayerSettings"
-
-  # itemsからEnum値を生成する
-  def getItems(self, context):
-    result = []
-    for i in range(len(self.items)):
-      layerName = self.items[i].name
-      result.append((layerName,layerName,"",2**i))
-    return intern_enum_items(result)
-
-  layerNames = []
-  name: StringProperty()
-  items:CollectionProperty(type=psdLayerItem)
-  settings:EnumProperty(
-    items=getItems,
-    options={
-      "ENUM_FLAG",
-      "ANIMATABLE"
-    },
-    update = onUpdateLayerSettings
-  )
-
-class psd_OT_Settings(bpy.types.PropertyGroup):
-  bl_idname = "layeredPsdMaterial.psd_settings"
-  bl_label = "psdMaterialProperties"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  # props
-  filePath: StringProperty(subtype="FILE_PATH",description="DO NOT EDIT,file path of psd file",update=setPSDLayerConfigs)
-  psdLayerNameEncoding: EnumProperty(items=[
-      ('macroman','default',""),
-      ('shift_jis','shift_jis',"")
-    ],
-    default='macroman'
-  )
-  layerSettings: CollectionProperty(type=psdLayerSettings)
-  # TODO:反転の処理追加
-  isFlipped: BoolProperty(description="左右反転の有無")
-
