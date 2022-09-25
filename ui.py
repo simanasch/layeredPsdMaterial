@@ -5,7 +5,7 @@ import bpy
 #
 class psdMaterial_PT_uiPanel(bpy.types.Panel):
   """オブジェクトのカスタムプロパティからpsdファイルとpsdファイル内で表示するlayer情報をとり、オブジェクトのmaterialとして設定する"""
-  bl_idname = "layeredPsdMaterial.psd_PT_uiPanel"
+  bl_idname = "layeredPsdMaterial.PSD_PT_uiPanel"
   bl_label = "layered psd material ui"
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'

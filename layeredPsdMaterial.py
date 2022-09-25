@@ -191,8 +191,8 @@ def setPSDLayerConfigs(self, context):
 #   def execute(self, context):
 #     return {'FINISHED'}
 
-# psdファイルの各layer階層の名前を持たせるためのクラス
 class psdLayerItem(bpy.types.PropertyGroup):
+  """psdファイル内の各layer階層の名前を持たせるためのクラス"""
   bl_idname = "layeredPsdMaterial.psd_layer_item"
   bl_label = "psdLayerItem"
 
@@ -211,8 +211,8 @@ def intern_enum_items(items):
     return STRING_CACHE[s]
   return [tuple(intern_string(s) for s in item) for item in items]
 
-# layerごとの表示状態保持用のカスタムプロパティ
 class psdLayerSettings(bpy.types.PropertyGroup):
+  """psdファイル内のlayerごとの表示状態を保持するカスタムプロパティクラス"""
   bl_idname = "layeredPsdMaterial.psd_layer_settings"
   bl_label = "psdLayerSettings"
 
@@ -252,36 +252,4 @@ class psd_OT_Settings(bpy.types.PropertyGroup):
   layerSettings: CollectionProperty(type=psdLayerSettings)
   # TODO:反転の処理追加
   isFlipped: BoolProperty(description="左右反転の有無")
-
-
-#
-# psdMaterial_PT_uiPanel
-#
-class psdMaterial_PT_uiPanel(bpy.types.Panel):
-  """オブジェクトのカスタムプロパティからpsdファイルとpsdファイル内で表示するlayer情報をとり、オブジェクトのmaterialとして設定する"""
-  bl_idname = "layeredPsdMaterial.psd_PT_uiPanel"
-  bl_label = "set object material from psd ui"
-  bl_space_type = 'VIEW_3D'
-  bl_region_type = 'UI'
-  bl_category = "Psd Material"
-  bl_label = "psd Configs"
-
-  #--- draw ---#
-  def draw(self, context):
-    layout = self.layout
-    psdSetting = context.object.psd_settings
-    layout.prop(psdSetting, "psdLayerNameEncoding")
-    layout.prop(psdSetting, "filePath")
-    layout.prop(psdSetting, "isFlipped",text="左右反転")
-    layout.separator()
-    # layout.prop(psdSetting, "layerSettings")
-    for layer in  psdSetting.layerSettings :
-      col = layout.column()
-      # print(layer)
-      col.label(text = layer.name)
-      if len(list(filter(lambda x:x.name.startswith("*") ,layer.items))) == 0 :
-        for item in layer.items:
-          col.prop_enum(layer, "settings", item.name)
-      else:
-        col.prop(layer,"settings",expand=True)
 

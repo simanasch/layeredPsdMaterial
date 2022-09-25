@@ -19,21 +19,22 @@ Created by simana
 '''
 
 bl_info = {
-    "name": "layered PSD Material",
-    "author": "simana",
-    "version": (0, 0, 1),
-    "blender": (2, 93, 3),
-    "location": "Object",
-    "description": "import and use layered PSD as Material",
-    "warning": "",
-    "doc_url": "",
-    "tracker_url": "",
-    "category": "Object",
+  "name": "layered PSD Material",
+  "author": "simana",
+  "version": (0, 0, 1),
+  "blender": (2, 93, 3),
+  "location": "Object",
+  "description": "import and use layered PSD as Material",
+  "warning": "",
+  "doc_url": "",
+  "tracker_url": "",
+  "category": "Object",
 }
 
 import bpy
-from . import layeredPsdMaterial
-from . import ui
+# import importlib
+from .layeredPsdMaterial import *
+from .ui import *
 
 #
 # register classs
@@ -61,3 +62,4 @@ def register():
 def unregister():
   for c in classes:
     bpy.utils.unregister_class(c)
+  bpy.app.handlers.frame_change_post.remove(layeredPsdMaterial.onFrameChangePost)
