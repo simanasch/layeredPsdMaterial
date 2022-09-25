@@ -35,8 +35,8 @@ import bpy
 # import importlib
 # from .layeredPsdMaterial import onFrameChangePost
 from .handler import *
-from .classes import psdLayerItem, psdLayerSettings, psd_OT_Settings
-from .ui import psdMaterial_PT_uiPanel
+from .classes import *
+from .ui import *
 
 #
 # register classs

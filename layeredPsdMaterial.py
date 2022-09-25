@@ -3,7 +3,6 @@
 # 画像をキャッシュする(透過pngとして一度保存するか)を渡せるようにする
 import bpy,re,os
 import numpy as np
-from bpy.props import StringProperty,EnumProperty,CollectionProperty,BoolProperty,PointerProperty
 from PIL import Image
 
 # このスクリプトではanimation nodeは使わない
@@ -43,7 +42,8 @@ def get_image_as_np_array(image):
   return np.array(image).flatten() / 255
 
 def onUpdateLayerSettings(self,context):
-  updatePsdViewState(context.object)
+  if context.object.psd_settings.filePath:
+    updatePsdViewState(context.object)
 
 
 def updatePsdViewState(obj):

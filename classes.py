@@ -1,6 +1,5 @@
 import bpy
 from bpy.props import StringProperty,EnumProperty,CollectionProperty,BoolProperty
-from .handler import *
 from .layeredPsdMaterial import *
 
 

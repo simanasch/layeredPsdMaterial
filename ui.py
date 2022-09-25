@@ -20,7 +20,8 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
     layout.prop(psdSetting, "filePath")
     layout.prop(psdSetting, "isFlipped",text="左右反転")
     layout.separator()
-    # layout.prop(psdSetting, "layerSettings")
+    if not psdSetting.filePath:
+      return
     for layer in  psdSetting.layerSettings :
       col = layout.column()
       # print(layer)
