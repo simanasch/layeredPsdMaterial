@@ -100,9 +100,6 @@ def getImageNameByProperty(obj):
   filename += "_" + str(int(obj.psd_settings.isFlipped))
   return filename
 
-def getTempPath():
-  return bpy.path.abspath('//'+ 'psdCache')
-
 # image:bpy.data.images[i]
 # return:bpy.data.images[imageName]
 def getImage(obj):
@@ -171,9 +168,9 @@ def addPsdLayerSettings(obj):
         item.name = layer.name
 
 def setPSDLayerConfigs(self, context):
+  # TODO:Operatorにする
   # context.objectがないか、psdファイルのパスじゃない場合はなにもしない
   if (context.object != None) & (getFileExtensionFromPath(self.filePath) == ".psd"):
     addPsdLayerSettings(context.object)
     # 読み込み時
     onUpdateLayerSettings(self, context)
-  pass

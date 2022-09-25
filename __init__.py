@@ -35,10 +35,11 @@ bl_info = {
 if "bpy" in locals():
   import importlib
   reloadables = [
-    "layeredPsdMaterial",
+    "layeredpsdmaterial",
     "handler",
     "classes",
-    "ui",
+    "operator",
+    "ui"
   ]
   print("reloading modules:" + str(reloadables))
   for mod in reloadables:
@@ -46,10 +47,11 @@ if "bpy" in locals():
       importlib.reload(locals()[mod])
 
 import bpy
-from .layeredPsdMaterial import *
+from .layeredpsdmaterial import *
 from .handler import *
 from .classes import *
 from .ui import *
+from .operator import *
 
 #
 # register classs
@@ -58,11 +60,12 @@ class_to_register = [
   psdLayerItem,
   psdLayerSettings,
   psd_OT_Settings,
-  psdMaterial_PT_uiPanel
+  psdMaterial_PT_uiPanel,
+  LAYEREDPSDMATERIAL_OT_importer
 ]
 
 #
-# register
+# アドオン有効化時の処理
 #
 def register():
   for c in class_to_register:
@@ -73,12 +76,14 @@ def register():
       pass
   bpy.types.Object.psd_settings = bpy.props.PointerProperty(type=psd_OT_Settings)
   bpy.app.handlers.frame_change_post.append(onFrameChangePost)
+  bpy.types.VIEW3D_MT_image_add.append(menu_func_import)
 
 
 #
-# unregister
-#        
+# アドオン無効化時の処理
+# 
 def unregister():
   for c in class_to_register:
     bpy.utils.unregister_class(c)
   bpy.app.handlers.frame_change_post.remove(onFrameChangePost)
+  bpy.types.VIEW3D_MT_image_add.remove(menu_func_import)

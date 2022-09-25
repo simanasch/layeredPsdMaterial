@@ -1,11 +1,11 @@
 import bpy
 from bpy.props import StringProperty,EnumProperty,CollectionProperty,BoolProperty
-from .layeredPsdMaterial import *
+from .layeredpsdmaterial import *
 
 
 class psdLayerItem(bpy.types.PropertyGroup):
   """psdファイル内の各layer階層の名前を持たせるためのクラス"""
-  bl_idname = "layeredPsdMaterial.psd_layer_item"
+  bl_idname = "layeredpsdmaterial.psd_layer_item"
   bl_label = "psdLayerItem"
 
   name:StringProperty()
@@ -26,7 +26,7 @@ def intern_enum_items(items):
 
 class psdLayerSettings(bpy.types.PropertyGroup):
   """psdファイル内のlayerごとの表示状態を保持するカスタムプロパティクラス"""
-  bl_idname = "layeredPsdMaterial.psd_layer_settings"
+  bl_idname = "layeredpsdmaterial.psd_layer_settings"
   bl_label = "psdLayerSettings"
 
   # itemsからEnum値を生成する
@@ -50,7 +50,7 @@ class psdLayerSettings(bpy.types.PropertyGroup):
   )
 
 class psd_OT_Settings(bpy.types.PropertyGroup):
-  bl_idname = "layeredPsdMaterial.psd_settings"
+  bl_idname = "layeredpsdmaterial.psd_settings"
   bl_label = "psdMaterialProperties"
   bl_options = {'REGISTER', 'UNDO'}
 

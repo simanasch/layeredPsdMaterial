@@ -5,7 +5,7 @@ import bpy
 #
 class psdMaterial_PT_uiPanel(bpy.types.Panel):
   """オブジェクトのカスタムプロパティからpsdファイルとpsdファイル内で表示するlayer情報をとり、オブジェクトのmaterialとして設定する"""
-  bl_idname = "layeredPsdMaterial.PSD_PT_uiPanel"
+  bl_idname = "layeredpsdmaterial.PSD_PT_uiPanel"
   bl_label = "layered psd material ui"
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
@@ -16,12 +16,13 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
   def draw(self, context):
     layout = self.layout
     psdSetting = context.object.psd_settings
+    if not psdSetting.filePath:
+      return
     layout.prop(psdSetting, "psdLayerNameEncoding")
+    # TODO:filePathをlayoutから外す
     layout.prop(psdSetting, "filePath")
     layout.prop(psdSetting, "isFlipped",text="左右反転")
     layout.separator()
-    if not psdSetting.filePath:
-      return
     for layer in  psdSetting.layerSettings :
       col = layout.column()
       # print(layer)
@@ -30,5 +31,6 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
         for item in layer.items:
           col.prop_enum(layer, "settings", item.name)
       else:
+        # layer名が"*"で始まる場合、ラジオボタン(的な)にする
         col.prop(layer,"settings",expand=True)
 
