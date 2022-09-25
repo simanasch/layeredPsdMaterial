@@ -31,9 +31,22 @@ bl_info = {
   "category": "Object",
 }
 
+# "reload Script"でスクリプトを再読み込みした場合に関連ファイルを再読み込みする
+if "bpy" in locals():
+  import importlib
+  reloadables = [
+    "layeredPsdMaterial",
+    "handler",
+    "classes",
+    "ui",
+  ]
+  print("reloading modules:" + str(reloadables))
+  for mod in reloadables:
+    if mod in locals():
+      importlib.reload(locals()[mod])
+
 import bpy
-# import importlib
-# from .layeredPsdMaterial import onFrameChangePost
+from .layeredPsdMaterial import *
 from .handler import *
 from .classes import *
 from .ui import *
@@ -41,7 +54,7 @@ from .ui import *
 #
 # register classs
 #
-classes = [
+class_to_register = [
   psdLayerItem,
   psdLayerSettings,
   psd_OT_Settings,
@@ -52,7 +65,7 @@ classes = [
 # register
 #
 def register():
-  for c in classes:
+  for c in class_to_register:
     try:
       bpy.utils.register_class(c)
     except ValueError as e:
@@ -66,6 +79,6 @@ def register():
 # unregister
 #        
 def unregister():
-  for c in classes:
+  for c in class_to_register:
     bpy.utils.unregister_class(c)
   bpy.app.handlers.frame_change_post.remove(onFrameChangePost)
