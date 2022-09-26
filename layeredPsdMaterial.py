@@ -168,9 +168,8 @@ def addPsdLayerSettings(obj):
         item.name = layer.name
 
 def setPSDLayerConfigs(self, context):
-  # TODO:Operatorにする
   # context.objectがないか、psdファイルのパスじゃない場合はなにもしない
-  if (context.object != None) & (getFileExtensionFromPath(self.filePath) == ".psd"):
+  if (context.object != None) & (getFileExtensionFromPath(context.object.psd_settings.filePath) == ".psd"):
     addPsdLayerSettings(context.object)
     # 読み込み時
     onUpdateLayerSettings(self, context)

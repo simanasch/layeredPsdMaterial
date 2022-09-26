@@ -1,6 +1,7 @@
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import EnumProperty
+from .layeredpsdmaterial import setPSDLayerConfigs
 
 def addPlane(filename,psd) : 
   w, h = psd.size
@@ -33,10 +34,12 @@ class LAYEREDPSDMATERIAL_OT_importer(bpy.types.Operator, ImportHelper):
 
   # メニューを実行したときに呼ばれるメソッド
   def execute(self, context):
-    active_obj = context.active_object
-    print(active_obj)
+    active_obj = context.object
+    active_obj.psd_settings.filePath = self.filepath
+    active_obj.psd_settings.psdLayerNameEncoding = self.psdLayerNameEncoding
+    setPSDLayerConfigs(self, context)
 
     return {'FINISHED'}
 
 def menu_func_import(self, context):
-  self.layout.operator(LAYEREDPSDMATERIAL_OT_importer.bl_idname, text="Import PSD As Plane", icon="TEXTURE")
+  self.layout.operator(LAYEREDPSDMATERIAL_OT_importer.bl_idname, text="Import PSD as Plane", icon="TEXTURE")

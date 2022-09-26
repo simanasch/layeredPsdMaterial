@@ -18,9 +18,12 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
     psdSetting = context.object.psd_settings
     if not psdSetting.filePath:
       return
-    layout.prop(psdSetting, "psdLayerNameEncoding")
+    layout.operator("layeredpsdmaterial.importer",text="PSDファイルを取り込み")
     # TODO:filePathをlayoutから外す
-    layout.prop(psdSetting, "filePath")
+    disabledSettings=layout.column()
+    disabledSettings.prop(psdSetting, "psdLayerNameEncoding")
+    disabledSettings.prop(psdSetting, "filePath")
+    disabledSettings.enabled = False
     layout.prop(psdSetting, "isFlipped",text="左右反転")
     layout.separator()
     for layer in  psdSetting.layerSettings :
