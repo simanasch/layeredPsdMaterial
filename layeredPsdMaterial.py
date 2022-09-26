@@ -42,7 +42,7 @@ def get_image_as_np_array(image):
   return np.array(image).flatten() / 255
 
 def onUpdateLayerSettings(self,context):
-  if context.object.psd_settings.filePath:
+  if bool(bpy.context.object.psd_settings) & bool(bpy.context.object.psd_settings.filePath):
     updatePsdViewState(context.object)
 
 
@@ -147,8 +147,13 @@ def setPsdLayerVisibility(psd,obj):
 def addPsdLayerSettings(obj):
   psdSetting = obj.psd_settings
   psd = PSDImage.open(os.path.abspath(bpy.path.abspath(psdSetting.filePath)),encoding=psdSetting.psdLayerNameEncoding)
+  w, h = psd.size
+  max_size = max(psd.size)
+  # importするpsdファイルに合わせ、オブジェクトをリサイズする
+  bpy.ops.transform.resize(value=(1/obj.scale[0],1/obj.scale[1],1/obj.scale[2]))
+  bpy.ops.transform.resize(value=((w/max_size, h/max_size,0)))
+  # psdファイルの設定クリア後、ルート階層用の設定値追加
   psdSetting.layerSettings.clear()
-  # 'Root'階層用の設定追加
   rootSetting = psdSetting.layerSettings.add()
   rootSetting.name='Root'
   rootSetting.items.clear()
@@ -167,7 +172,7 @@ def addPsdLayerSettings(obj):
         item = layerSetting.items.add()
         item.name = layer.name
 
-def setPSDLayerConfigs(self, context):
+def initPSDPlane(self, context):
   # context.objectがないか、psdファイルのパスじゃない場合はなにもしない
   if (context.object != None) & (getFileExtensionFromPath(context.object.psd_settings.filePath) == ".psd"):
     addPsdLayerSettings(context.object)

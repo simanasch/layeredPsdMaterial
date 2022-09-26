@@ -1,7 +1,7 @@
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import EnumProperty
-from .layeredpsdmaterial import setPSDLayerConfigs
+from bpy.props import BoolProperty,EnumProperty
+from .layeredpsdmaterial import initPSDPlane
 
 def addPlane(filename,psd) : 
   w, h = psd.size
@@ -29,15 +29,22 @@ class LAYEREDPSDMATERIAL_OT_importer(bpy.types.Operator, ImportHelper):
     ('macroman','default',""),
     ('shift_jis','shift_jis',"")
     ],
-    default='macroman'
+    default='macroman',
+    name='レイヤー名のエンコード'
+  )
+
+  addPlane: BoolProperty(
+    name="平面を追加"
   )
 
   # メニューを実行したときに呼ばれるメソッド
   def execute(self, context):
+    if self.addPlane :
+      bpy.ops.mesh.primitive_plane_add()
     active_obj = context.object
     active_obj.psd_settings.filePath = self.filepath
     active_obj.psd_settings.psdLayerNameEncoding = self.psdLayerNameEncoding
-    setPSDLayerConfigs(self, context)
+    initPSDPlane(self, context)
 
     return {'FINISHED'}
 

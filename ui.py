@@ -15,10 +15,10 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
   #--- draw ---#
   def draw(self, context):
     layout = self.layout
-    psdSetting = context.object.psd_settings
-    if not psdSetting.filePath:
+    if (context.object == None) | (context.object.psd_settings == None) | (context.object.psd_settings.filePath == None):
       return
-    layout.operator("layeredpsdmaterial.importer",text="PSDファイルを取り込み")
+    psdSetting = context.object.psd_settings
+    layout.operator("layeredpsdmaterial.importer",text="PSDファイルを選択")
     # TODO:filePathをlayoutから外す
     disabledSettings=layout.column()
     disabledSettings.prop(psdSetting, "psdLayerNameEncoding")
