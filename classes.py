@@ -23,6 +23,11 @@ def intern_enum_items(items):
     return STRING_CACHE[s]
   return [tuple(intern_string(s) for s in item) for item in items]
 
+def onUpdateLayerSettings(self,context):
+  if hasattr(context, "object") and hasattr(context.object, "psd_settings") and bool(context.object.psd_settings.filePath):
+    # 何故か条件を満たすオブジェクトが選択されている場合に常時呼ばれている…
+    # print("onUpdateLayerSettings:"+context.object.psd_settings.filePath)
+    updatePsdViewState(context.object)
 
 class psdLayerSettings(bpy.types.PropertyGroup):
   """psdファイル内のlayerごとの表示状態を保持するカスタムプロパティクラス"""
@@ -34,7 +39,7 @@ class psdLayerSettings(bpy.types.PropertyGroup):
     result = []
     for i in range(len(self.items)):
       layerName = self.items[i].name
-      result.append((layerName,layerName,"",2**i))
+      result.append((layerName,layerName,""))
     return intern_enum_items(result)
 
   layerNames = []

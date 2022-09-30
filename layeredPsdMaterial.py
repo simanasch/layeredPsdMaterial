@@ -1,15 +1,8 @@
-# オブジェクトとpsdのパスを引数とする
-# オブジェクトのカスタムプロパティからpsdの表示状態を取得し、psdに設定する
-# 画像をキャッシュする(透過pngとして一度保存するか)を渡せるようにする
+# PSDファイルや画像に対する関数郡
 import bpy,re,os
 import numpy as np
 from PIL import Image
-
-# このスクリプトではanimation nodeは使わない
-try:
-  from psd_tools import PSDImage
-except:
-  print('psd_tool is not installed!')
+from psd_tools import PSDImage
 
 # layerの絶対パスを返す
 def getGroupAbsPath(layer, sanitize=True):
@@ -36,22 +29,14 @@ def getFileNameFromPath(filepath):
 def getFileExtensionFromPath(filepath):
   return os.path.splitext( os.path.basename(filepath))[1]
 
-# TODO:imageの表示部分はanimation nodesのほうに移動する
 # psdファイルから、blenderの画像にするためのnp.arrayを返す
 def get_image_as_np_array(image):
   return np.array(image).flatten() / 255
 
-def onUpdateLayerSettings(self,context):
-  if bool(bpy.context.object.psd_settings) & bool(bpy.context.object.psd_settings.filePath):
-    updatePsdViewState(context.object)
-
-
 def updatePsdViewState(obj):
   """psdファイルの表示状態が更新された場合の処理"""
-  # この時点でlayerとカスタムプロパティからimage名を生成する
+  # layerの表示状態からimage名を生成する
   image_name = getImageNameByProperty(obj)
-  # psdの表示layer設定
-  # setPsdLayerVisibility(psd, obj)
   bpy_image = getImage(obj)
   # psdファイルの表示先とするmaterialを作成してplaneに割当する
   obj.active_material = getMaterial(image_name,bpy_image)
@@ -67,32 +52,29 @@ def getMaterial(image_name,bpy_image):
     # print('material exists:'+str(add_mat))
     imageTextureNode = add_mat.node_tree.nodes['画像テクスチャ']
   else :
+    # マテリアルを新規追加
     add_mat = bpy.data.materials.new(image_name)
-    # print('material not exists:'+str(add_mat))
     # 透過を設定
     add_mat.blend_method = 'CLIP'
     add_mat.use_nodes = True
 
+    # ノードを追加
     shader_node = add_mat.node_tree.nodes['Principled BSDF']
-    # "画像テクスチャ"のノードを追加する
     imageTextureNode = add_mat.node_tree.nodes.new("ShaderNodeTexImage")
 
-    # ノードに対するリンクを設定する
+    # ノード同士のリンクを設定
     add_mat.node_tree.links.new(shader_node.inputs['Base Color'], imageTextureNode.outputs['Color'])
     add_mat.node_tree.links.new(shader_node.inputs['Alpha'], imageTextureNode.outputs['Alpha'])
   imageTextureNode.image = bpy_image
   return add_mat
 
-# objに設定されているカスタムプロパティからimageにつける名前を取得する
 def getImageNameByProperty(obj):
+  """引数のobjに対するpsdファイル関係の設定から、imageにつける名前を取得する"""
   filename=os.path.splitext(bpy.path.basename(obj.psd_settings.filePath))[0]
-  # やりたいこと:layerの選択状態に対して一意な名前をつける
   for ls in obj.psd_settings.layerSettings:
     bithashed=0
     for i in range(len(ls.items.keys())):
       key=ls.items.keys()[i]
-      # print(key)
-      # print("settings:" + str(key in ls.settings))
       # TODO:"!"始まりなら必須にする条件判定を切り出すかする
       if (key in ls.settings) | key.startswith('!'):
         bithashed = bithashed + 2**i
@@ -100,9 +82,8 @@ def getImageNameByProperty(obj):
   filename += "_" + str(int(obj.psd_settings.isFlipped))
   return filename
 
-# image:bpy.data.images[i]
-# return:bpy.data.images[imageName]
 def getImage(obj):
+  """引数のobjに対するpsdファイル関係の設定から、objに設定するbpy_imageを返す"""
   imageName = getImageNameByProperty(obj)
   if bpy.data.images.get(imageName) != None:
     # 既にimageが存在する場合
@@ -122,8 +103,8 @@ def getImage(obj):
 
   return bpy_image
 
-# psdファイル内の各layerに対して引数のobjのカスタムプロパティから表示/非表示の設定をする
 def setPsdLayerVisibility(psd,obj):
+  """引数のobjに対するpsdファイル関係の設定から、psdファイル内の各layerに対する表示制御を行う"""
   for layer in psd:
     setting = obj.psd_settings.layerSettings.get(getGroupAbsPath(layer))
     if layer.is_group():
@@ -135,7 +116,7 @@ def setPsdLayerVisibility(psd,obj):
         break
       # TODO:"!"始まりなら必須にする条件判定を切り出すかする
       elif layer.name.startswith('!'):
-        # layer名が"!"で始まる場合は必須
+        # layer名が"!"で始まる場合、必須
         layer.visible = True
       elif layer.name in setting.settings:
         layer.visible=True
@@ -143,14 +124,14 @@ def setPsdLayerVisibility(psd,obj):
         layer.visible=False
   return psd
 
-# psdファイルの読み込み後、layerの表示制御をするための設定値の追加
 def addPsdLayerSettings(obj):
+  """PSDファイル読み込み後の初期処理、各layerごとに表示/非表示制御をするためのプロパティを追加する"""
   psdSetting = obj.psd_settings
   psd = PSDImage.open(os.path.abspath(bpy.path.abspath(psdSetting.filePath)),encoding=psdSetting.psdLayerNameEncoding)
   w, h = psd.size
   max_size = max(psd.size)
   # importするpsdファイルに合わせ、オブジェクトをリサイズする
-  bpy.ops.transform.resize(value=(1/obj.scale[0],1/obj.scale[1],1/obj.scale[2]))
+  obj.scale = (1.0,1.0,1.0)
   bpy.ops.transform.resize(value=((w/max_size, h/max_size,0)))
   # psdファイルの設定クリア後、ルート階層用の設定値追加
   psdSetting.layerSettings.clear()
@@ -159,7 +140,6 @@ def addPsdLayerSettings(obj):
   rootSetting.items.clear()
   # その他フォルダ用の設定追加
   for layer in list(psd.descendants()):
-    # print('group:'+getGroupAbsPath(layer) + "layerName:"+layer.name )
     if ((getGroupAbsPath(layer) == "Root") & (layer.is_group() == False)):
       item = rootSetting.items.add()
       item.name = layer.name
@@ -175,6 +155,7 @@ def addPsdLayerSettings(obj):
 def initPSDPlane(self, context):
   # context.objectがないか、psdファイルのパスじゃない場合はなにもしない
   if (context.object != None) & (getFileExtensionFromPath(context.object.psd_settings.filePath) == ".psd"):
+    # psdファイルに対する設定値を初期化
     addPsdLayerSettings(context.object)
-    # 読み込み時
-    onUpdateLayerSettings(self, context)
+    # psdファイルの読み込み
+    updatePsdViewState(context.object)

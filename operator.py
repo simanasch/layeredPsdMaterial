@@ -1,7 +1,7 @@
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import BoolProperty,EnumProperty
-from .layeredpsdmaterial import initPSDPlane
+from .layeredpsdmaterial import initPSDPlane, getFileNameFromPath
 
 def addPlane(filename,psd) : 
   w, h = psd.size
@@ -41,6 +41,7 @@ class LAYEREDPSDMATERIAL_OT_importer(bpy.types.Operator, ImportHelper):
   def execute(self, context):
     if self.addPlane :
       bpy.ops.mesh.primitive_plane_add()
+      context.object.name = getFileNameFromPath(self.filepath)
     active_obj = context.object
     active_obj.psd_settings.filePath = self.filepath
     active_obj.psd_settings.psdLayerNameEncoding = self.psdLayerNameEncoding
