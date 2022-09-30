@@ -1,7 +1,8 @@
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import BoolProperty,EnumProperty
-from .layeredpsdmaterial import initPSDPlane, getFileNameFromPath
+from bpy.props import BoolProperty,EnumProperty,StringProperty
+from .layeredpsdmaterial import initPSDPlane, getFileNameFromPath,updatePsdViewState
+from .classes import psdLayerSettings, psdLayerItem
 
 def addPlane(filename,psd) : 
   w, h = psd.size
@@ -47,6 +48,35 @@ class LAYEREDPSDMATERIAL_OT_importer(bpy.types.Operator, ImportHelper):
     active_obj.psd_settings.psdLayerNameEncoding = self.psdLayerNameEncoding
     initPSDPlane(self, context)
 
+    return {'FINISHED'}
+
+class LAYEREDPSDMATERIAL_OT_layerselector(bpy.types.Operator, bpy.types.PropertyGroup):
+  bl_idname = "layeredpsdmaterial.layerselector"
+  bl_label = "select a layer of psd"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  groupName:StringProperty(options={"HIDDEN"})
+  layerName:StringProperty(options={"HIDDEN"})
+
+  def execute(self,context): 
+    print("layer name:" + self.layerName + "\tg:" + self.groupName)
+    if bool(self.groupName) & bool(self.layerName):
+      # ラジオボタンにしない場合の処理
+      ls = context.object.psd_settings.layerSettings[self.groupName]
+      print(ls)
+      layerItem = ls.items.get(self.layerName)
+      print(layerItem)
+      selected_index = ls.selectedItems.find(self.layerName)
+      print(selected_index)
+      if selected_index >= 0:
+        ls.selectedItems.remove(selected_index)
+      else:
+        # ラジオボタンにする場合、他の選択値をクリアする
+        if layerItem.name.startswith('*'):
+          ls.selectedItems.clear()
+        si = ls.selectedItems.add()
+        si.name = self.layerName
+    updatePsdViewState(context.object)
     return {'FINISHED'}
 
 def menu_func_import(self, context):

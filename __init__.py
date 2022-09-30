@@ -61,7 +61,8 @@ class_to_register = [
   psdLayerSettings,
   psd_OT_Settings,
   psdMaterial_PT_uiPanel,
-  LAYEREDPSDMATERIAL_OT_importer
+  LAYEREDPSDMATERIAL_OT_importer,
+  LAYEREDPSDMATERIAL_OT_layerselector
 ]
 
 #
