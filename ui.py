@@ -29,14 +29,21 @@ class psdMaterial_PT_uiPanel(bpy.types.Panel):
     for layer in  psdSetting.layerSettings :
       col = layout.column()
       # print(layer)
-      col.prop(layer,"items")
-      col.prop(layer,"selectedItems")
+      # col.prop(layer,"items")
+      # col.prop(layer,"selectedItems")
       if len(layer.items) > 0:
         col.label(text = layer.name)
+      if len(list(filter(lambda x:x.name.startswith("*") ,layer.items))) == 0 :
         for item in layer.items:
-          # col.prop_enum(layer, "settings", item.name)
-          isSelected = layer.selectedItems.get(item.name) != None
-          op = col.operator("layeredpsdmaterial.layerselector", text=item.name, depress=isSelected)
-          op.groupName = layer.name
-          op.layerName = item.name
+          col.prop_enum(layer, "settings", item.name)
+      else:
+        # layer名が"*"で始まる場合、ラジオボタン(的な)にする
+        col.prop(layer,"settings",expand=True)
+
+        # for item in layer.items:
+        #   # col.prop_enum(layer, "settings", item.name)
+        #   isSelected = layer.selectedItems.get(item.name) != None
+        #   op = col.operator("layeredpsdmaterial.layerselector", text=item.name, depress=isSelected)
+        #   op.groupName = layer.name
+        #   op.layerName = item.name
 

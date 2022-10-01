@@ -76,7 +76,7 @@ def getImageNameByProperty(obj):
     for i in range(len(ls.items.keys())):
       key=ls.items.keys()[i]
       # TODO:"!"始まりなら必須にする条件判定を切り出すかする
-      if bool(ls.selectedItems.get(key)) | key.startswith('!'):
+      if bool(ls.selectedItems.get(key)) | (key in ls.settings) | key.startswith('!'):
         bithashed = bithashed + 2**i
     filename += "_"+str(bithashed)
   filename += "_" + str(int(obj.psd_settings.isFlipped))
@@ -90,6 +90,7 @@ def getImage(obj):
     # print("image already exists:" + imageName)
     bpy_image = bpy.data.images[imageName]
   else:
+    print(os.path.abspath(bpy.path.abspath(obj.psd_settings.filePath)))
     psd = PSDImage.open(os.path.abspath(bpy.path.abspath(obj.psd_settings.filePath)),encoding=obj.psd_settings.psdLayerNameEncoding)
     setPsdLayerVisibility(psd, obj)
     w,h = psd.size
@@ -108,7 +109,7 @@ def setPsdLayerVisibility(psd,obj):
   for layer in psd:
     setting = obj.psd_settings.layerSettings.get(getGroupAbsPath(layer))
     if layer.is_group():
-      # groupは常に表示する
+      # TODO:Groupに対する表示制御を追加
       layer.visible = True
       setPsdLayerVisibility(layer, obj)
     else:
@@ -120,8 +121,8 @@ def setPsdLayerVisibility(psd,obj):
         layer.visible = True
       elif setting.selectedItems.get(layer.name) != None:
         layer.visible=True
-      # elif layer.name in setting.settings:
-      #   layer.visible=True
+      elif layer.name in setting.settings:
+        layer.visible=True
       else:
         layer.visible=False
   return psd

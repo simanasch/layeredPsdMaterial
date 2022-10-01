@@ -1,5 +1,5 @@
 import bpy
-from .layeredpsdmaterial import *
+from .layeredPsdMaterial import *
 
 def onFrameChangePost(scene):
   """表示フレーム更新後の処理"""
