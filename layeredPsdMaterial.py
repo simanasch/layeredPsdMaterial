@@ -112,6 +112,7 @@ def setPsdLayerVisibility(psd,obj):
       layer.visible = True
       setPsdLayerVisibility(layer, obj)
     else:
+      # TODO:目パチ/口パクとかで設定値を上書きできるようにする
       if setting == None:
         break
       # TODO:"!"始まりなら必須にする条件判定を切り出すかする

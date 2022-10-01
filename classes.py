@@ -44,7 +44,7 @@ class psdLayerSettings(bpy.types.PropertyGroup):
 
   name: StringProperty()
   items:CollectionProperty(type=psdLayerItem)
-  selectedItems : CollectionProperty(type=psdLayerItem)
+  selectedItems : CollectionProperty(type=psdLayerItem,options={"ANIMATABLE"})
   # settings:EnumProperty(
   #   items=getItems,
   #   options={
