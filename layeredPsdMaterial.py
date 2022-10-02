@@ -4,6 +4,9 @@ import numpy as np
 from PIL import Image
 from psd_tools import PSDImage
 
+def sanitizeFilePath(path):
+  return re.sub(r"[\/:*?\"<>|]","_",path )
+
 # layerの絶対パスを返す
 def getGroupAbsPath(layer, sanitize=True):
   if (layer.name == "Root" )| (layer.name == None) | (layer.parent == None):
@@ -11,14 +14,14 @@ def getGroupAbsPath(layer, sanitize=True):
   elif layer.parent.name == "Root":
     if layer.is_group():
       # Root階層のGroup
-      return re.sub(r"[\/:*?\"<>|]","_",layer.name )
+      return sanitizeFilePath(layer.name)
     else:
       # Root階層の通常Layer
       return "Root"
   else:
     if layer.is_group():
       # Root階層以外でGroupの場合
-      return os.path.join(getGroupAbsPath(layer.parent),re.sub(r"[\/:*?\"<>|]","_",layer.name ))
+      return os.path.join(getGroupAbsPath(layer.parent),sanitizeFilePath(layer.name))
     else:
       # Root階層以外でlayerの場合
       return getGroupAbsPath(layer.parent)
