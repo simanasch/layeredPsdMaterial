@@ -59,6 +59,7 @@ def getMaterial(image_name,bpy_image):
     add_mat = bpy.data.materials.new(image_name)
     # 透過を設定
     add_mat.blend_method = 'CLIP'
+    add_mat.shadow_method = 'CLIP'
     add_mat.use_nodes = True
 
     # ノードを追加
