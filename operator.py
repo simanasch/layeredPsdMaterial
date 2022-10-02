@@ -14,9 +14,6 @@ def addPlane(filename,psd) :
   bpy.context.view_layer.objects.active.name = filename
   return bpy.context.view_layer.objects.active
 
-# 作るもの:
-# 1.psdファイルを平面としてimportするOperator
-# 2.psdファイル読み込みを行うOperator(1.とまとめられるかも?テクスチャ変えたら縦横比変わる)
 class LAYEREDPSDMATERIAL_OT_importer(bpy.types.Operator, ImportHelper):
   """psdファイルを開き、平面に対して割り当てする"""
   bl_idname = "layeredpsdmaterial.importer"

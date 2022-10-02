@@ -52,6 +52,7 @@ from .handler import *
 from .classes import *
 from .ui import *
 from .operator import *
+from .addon_preference import *
 
 #
 # register classs
@@ -62,7 +63,9 @@ class_to_register = [
   psd_OT_Settings,
   psdMaterial_PT_uiPanel,
   LAYEREDPSDMATERIAL_OT_importer,
-  LAYEREDPSDMATERIAL_OT_layerselector
+  LAYEREDPSDMATERIAL_OT_layerselector,
+  LAYEREDPSDMATERIAL_OT_installmodule,
+  AddonPreferences
 ]
 
 #
