@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import FloatProperty,StringProperty,EnumProperty,CollectionProperty,BoolProperty
-from .layeredPsdMaterial import *
+from .psd import *
 
 
 class psdLayerItem(bpy.types.PropertyGroup):

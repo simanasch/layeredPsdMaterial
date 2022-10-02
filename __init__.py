@@ -35,7 +35,7 @@ bl_info = {
 if "bpy" in locals():
   import importlib
   reloadables = [
-    "layeredPsdMaterial",
+    "psd",
     "handler",
     "classes",
     "operator",
@@ -47,7 +47,7 @@ if "bpy" in locals():
       importlib.reload(locals()[mod])
 
 import bpy
-from .layeredPsdMaterial import *
+from .psd import *
 from .handler import *
 from .classes import *
 from .ui import *
