@@ -76,7 +76,7 @@ def getImageNameByProperty(obj):
     for i in range(len(ls.items.keys())):
       key=ls.items.keys()[i]
       # TODO:"!"始まりなら必須にする条件判定を切り出すかする
-      if bool(ls.selectedItems.get(key)) | (key in ls.settings) | key.startswith('!'):
+      if (key in ls.settings) | key.startswith('!'):
         bithashed = bithashed + 2**i
     filename += "_"+str(bithashed)
   filename += "_" + str(int(obj.psd_settings.isFlipped))
@@ -119,8 +119,8 @@ def setPsdLayerVisibility(psd,obj):
       elif layer.name.startswith('!'):
         # layer名が"!"で始まる場合、必須
         layer.visible = True
-      elif setting.selectedItems.get(layer.name) != None:
-        layer.visible=True
+      # elif setting.selectedItems.get(layer.name) != None:
+      #   layer.visible=True
       elif layer.name in setting.settings:
         layer.visible=True
       else:

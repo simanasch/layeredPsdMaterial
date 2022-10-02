@@ -45,16 +45,7 @@ class psdLayerSettings(bpy.types.PropertyGroup):
   name: StringProperty()
   isvisible: BoolProperty(default=True)
   items:CollectionProperty(type=psdLayerItem)
-  selectedItems : CollectionProperty(type=psdLayerItem)
-  volume: FloatProperty()
-  controlType:EnumProperty(
-    items=[
-      ("default","default",""),
-      ("index","index","")
-    ],
-    options={"ANIMATABLE"},
-    default='default'
-  )
+  # selectedItems : CollectionProperty(type=psdLayerItem)
   settings:EnumProperty(
     items=getItems,
     options={
