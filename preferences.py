@@ -15,7 +15,7 @@ class AddonPreferences(bpy.types.AddonPreferences):
         drawModuleInstaller(context, layout)
 
 def drawModuleInstaller(context: bpy.types.Context, layout: bpy.types.UILayout):
-    modules = ["numpy","psd_tools"]
+    modules = ["numpy","pillow","psd_tools"]
 
     box = layout.box()
     box.label(text = "Install modules:")
@@ -28,6 +28,6 @@ def drawModuleInstaller(context: bpy.types.Context, layout: bpy.types.UILayout):
             row.label(text = f'{title} is installed', icon = 'CHECKMARK')
         else:
             row = col.row(align = True)
-            op = row.operator(module_installer.BF_InstallModule.bl_idname,
+            op = row.operator(module_installer.LAYEREDPSDMATERIAL_OT_installmodule.bl_idname,
                       text = f'Install {title}', icon = 'IMPORT')
             op.name = module

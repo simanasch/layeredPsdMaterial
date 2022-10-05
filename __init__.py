@@ -46,7 +46,6 @@ if "bpy" in locals():
       importlib.reload(locals()[mod])
 
 import bpy
-import addon_utils
 from . import auto_load
 
 auto_load.init()

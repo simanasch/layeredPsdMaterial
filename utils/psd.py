@@ -1,8 +1,12 @@
 # PSDファイルや画像に対する関数郡
 import bpy,re,os
-import numpy as np
-from PIL import Image
-from psd_tools import PSDImage
+try:
+  import numpy as np
+  from PIL import Image
+  from psd_tools import PSDImage
+except Exception as e:
+  import logging
+  logging.debug("error during import:"+ str(e))
 
 def sanitizeFilePath(path):
   return re.sub(r"[\/:*?\"<>|]","_",path )
