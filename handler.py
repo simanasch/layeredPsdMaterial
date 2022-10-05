@@ -1,5 +1,5 @@
 import bpy
-from .psd import *
+from .utils.psd import *
 
 def onFrameChangePost(scene):
   """表示フレーム更新後の処理"""

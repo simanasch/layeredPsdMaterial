@@ -1,8 +1,8 @@
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import BoolProperty,EnumProperty,StringProperty
-from .psd import initPSDPlane, getFileNameFromPath,updatePsdViewState
-from .classes import psdLayerSettings, psdLayerItem
+from ..utils.psd import initPSDPlane, getFileNameFromPath,updatePsdViewState
+from ..classes import psdLayerSettings, psdLayerItem
 
 def addPlane(filename,psd) : 
   w, h = psd.size
