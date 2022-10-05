@@ -15,7 +15,7 @@ class AddonPreferences(bpy.types.AddonPreferences):
         drawModuleInstaller(context, layout)
 
 def drawModuleInstaller(context: bpy.types.Context, layout: bpy.types.UILayout):
-    modules = ["numpy","pillow","psd_tools"]
+    modules = ["numpy","psd_tools"]
 
     box = layout.box()
     box.label(text = "Install modules:")
