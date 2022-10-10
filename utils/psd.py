@@ -57,7 +57,7 @@ def getMaterial(image_name,bpy_image):
   if image_name in list(bpy.data.materials.keys()):
     add_mat = bpy.data.materials[image_name]
     # print('material exists:'+str(add_mat))
-    imageTextureNode = add_mat.node_tree.nodes['Principled BSDF']
+    imageTextureNode = add_mat.node_tree.nodes['画像テクスチャ']
   else :
     # マテリアルを新規追加
     add_mat = bpy.data.materials.new(image_name)

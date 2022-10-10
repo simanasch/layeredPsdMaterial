@@ -1,14 +1,7 @@
 import bpy
-from bpy.props import FloatProperty,StringProperty,EnumProperty,CollectionProperty,BoolProperty
-from .utils.psd import *
-
-
-class psdLayerItem(bpy.types.PropertyGroup):
-  """psdファイル内の各layer階層の名前を持たせるためのクラス"""
-  bl_idname = "layeredpsdmaterial.psd_layer_item"
-  bl_label = "psdLayerItem"
-
-  name:StringProperty()
+from bpy.props import StringProperty,EnumProperty,CollectionProperty,BoolProperty
+from ..utils.psd import *
+from .psdLayerItem import psdLayerItem
 
 # bpy.props.EnumPropertyの既知バグ回避のためのワークアラウンド
 # EnumPropertyに持たせる文字列への参照をキャッシュする(ないと文字化けする。。。)
@@ -54,21 +47,3 @@ class psdLayerSettings(bpy.types.PropertyGroup):
     },
     update = onUpdateLayerSettings
   )
-
-class psd_OT_Settings(bpy.types.PropertyGroup):
-  bl_idname = "layeredpsdmaterial.psd_settings"
-  bl_label = "psdMaterialProperties"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  # props
-  filePath: StringProperty(subtype="FILE_PATH",description="psdファイルのパス")
-  psdLayerNameEncoding: EnumProperty(items=[
-      ('macroman','default',""),
-      ('shift_jis','shift_jis',"")
-    ],
-    default='macroman',
-    description="psdファイル内のレイヤー名のエンコード、文字化けする場合は変更してください"
-  )
-  layerSettings: CollectionProperty(type=psdLayerSettings)
-  isFlipped: BoolProperty(description="左右反転の有無")
-

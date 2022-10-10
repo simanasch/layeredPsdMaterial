@@ -31,6 +31,7 @@ def register():
         if module.__name__ == __name__:
             continue
         if hasattr(module, "register"):
+            print("registering module\t"+str(module))
             module.register()
 
 def unregister():
@@ -43,6 +44,10 @@ def unregister():
         if hasattr(module, "unregister"):
             module.unregister()
 
+def reload():
+    for mod in modules:
+        # print("reloading"+ str(mod))
+        importlib.reload(mod)
 
 # Import modules
 #################################################

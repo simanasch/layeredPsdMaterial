@@ -33,17 +33,8 @@ bl_info = {
 
 # "reload Script"でスクリプトを再読み込みした場合に関連ファイルを再読み込みする
 if "bpy" in locals():
-  import importlib
-  reloadables = [
-    "psd",
-    "handler",
-    "classes",
-    "operator",
-    "ui"
-  ]
-  for mod in reloadables:
-    if mod in locals():
-      importlib.reload(locals()[mod])
+  from . import auto_load
+  auto_load.reload()
 
 import bpy
 from . import auto_load
@@ -56,11 +47,15 @@ auto_load.init()
 def register():
   auto_load.register()
 
-  from .handler import onFrameChangePost
-  from .operators.operator import menu_func_import
-  from .classes import psd_OT_Settings
+  from .classes.psdSettings import psd_OT_Settings
+  from .handler.handler import onFrameChangePost
+  from .operator.operator import menu_func_import
+  # from .classes import psd_OT_Settings
+  print(bpy.app.handlers.frame_change_post)
+  bpy.app.handlers.frame_change_post.clear()
   bpy.types.Object.psd_settings = bpy.props.PointerProperty(type=psd_OT_Settings)
   bpy.app.handlers.frame_change_post.append(onFrameChangePost)
+  print(bpy.app.handlers.frame_change_post)
   bpy.types.VIEW3D_MT_image_add.append(menu_func_import)
 
 #
@@ -68,7 +63,7 @@ def register():
 # 
 def unregister():
   auto_load.unregister()
-  from .handler import onFrameChangePost
-  from .operators.operator import menu_func_import
+  from .handler.handler import onFrameChangePost
+  from .operator.operator import menu_func_import
   bpy.app.handlers.frame_change_post.remove(onFrameChangePost)
   bpy.types.VIEW3D_MT_image_add.remove(menu_func_import)

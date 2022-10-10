@@ -2,8 +2,8 @@ import os
 import bpy
 import sys
 from bpy.props import *
-from . utils import module_util
-from . operators import module_installer
+from ..utils import module_util
+from ..operator import module_installer
 
 addonName = os.path.basename(os.path.dirname(__file__))
 
