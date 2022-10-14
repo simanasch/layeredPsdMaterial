@@ -57,7 +57,7 @@ def getMaterial(image_name,bpy_image):
   if image_name in list(bpy.data.materials.keys()):
     add_mat = bpy.data.materials[image_name]
     # print('material exists:'+str(add_mat))
-    imageTextureNode = add_mat.node_tree.nodes['画像テクスチャ']
+    # imageTextureNode = add_mat.node_tree.nodes['画像テクスチャ']
   else :
     # マテリアルを新規追加
     add_mat = bpy.data.materials.new(image_name)
@@ -73,7 +73,7 @@ def getMaterial(image_name,bpy_image):
     # ノード同士のリンクを設定
     add_mat.node_tree.links.new(shader_node.inputs['Base Color'], imageTextureNode.outputs['Color'])
     add_mat.node_tree.links.new(shader_node.inputs['Alpha'], imageTextureNode.outputs['Alpha'])
-  imageTextureNode.image = bpy_image
+    imageTextureNode.image = bpy_image
   return add_mat
 
 def getImageNameByProperty(obj):
@@ -95,10 +95,9 @@ def getImage(obj):
   imageName = getImageNameByProperty(obj)
   if bpy.data.images.get(imageName) != None:
     # 既にimageが存在する場合
-    # print("image already exists:" + imageName)
     bpy_image = bpy.data.images[imageName]
   else:
-    print(os.path.abspath(bpy.path.abspath(obj.psd_settings.filePath)))
+    # print(os.path.abspath(bpy.path.abspath(obj.psd_settings.filePath)))
     psd = PSDImage.open(os.path.abspath(bpy.path.abspath(obj.psd_settings.filePath)),encoding=obj.psd_settings.psdLayerNameEncoding)
     setPsdLayerVisibility(psd, obj)
     w,h = psd.size
@@ -106,6 +105,7 @@ def getImage(obj):
     bpy_image = bpy.data.images.new(imageName, w, h, alpha=True)
     # imageの書き出しをしない場合、numpy Arrayにしてpixelsに渡す
     image  = psd.compose(force=True)
+    # 左右反転の処理
     if obj.psd_settings.isFlipped:
       image = image.transpose(method=Image.Transpose.FLIP_LEFT_RIGHT)
     bpy_image.pixels = get_image_as_np_array(image)
